@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Yoshihiro Tanaka
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.cordea.canvasanimationsample;
 
 import android.animation.ObjectAnimator;
@@ -6,8 +22,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -17,7 +33,6 @@ public class PathAnimationView extends View {
 
     private Path mPath;
     private PathMeasure mMeasure;
-    private float mProgress = 0.0f;
 
     public PathAnimationView(Context context) {
         super(context);
@@ -45,10 +60,12 @@ public class PathAnimationView extends View {
         PathMeasure measure = new PathMeasure();
         measure.setPath(path, false);
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+
         mPath = path;
         mMeasure = measure;
-
-//        mMeasure.getSegment(mMeasure.getLength(), mMeasure.getLength() * 0.0f, mPath, true);
     }
 
     @Override
@@ -66,7 +83,7 @@ public class PathAnimationView extends View {
 
     private void setProgress(float progress) {
         mPath.reset();
-        mMeasure.getSegment(mMeasure.getLength(), mMeasure.getLength() * progress, mPath, true);
+        mMeasure.getSegment(0.0f, mMeasure.getLength() * progress, mPath, true);
         invalidate();
     }
 
